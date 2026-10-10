@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel Social — Protótipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F3EE; --surf:#FFFFFF; --ink:#1B1F24; --mut:#4F5660; --line:#DAD6CD; --soft:#EFECE5;
+  --pri:#1E4FB4; --pri-d:#173E8C; --pri-s:#E7EEFB; --on-pri:#DCE6FA;
+  --gr:#1E7A3F; --gr-t:#14532D; --gr-s:#E3F3E7;
+  --ye:#C99400; --ye-t:#5C4300; --ye-s:#FFF3C4;
+  --red:#B42318; --sk:#E8E5DE;
+  --shadow:0 2px 10px rgba(26,30,38,.07);
+  --font:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:var(--font);color:var(--ink);background:#E4E0D6;line-height:1.25;-webkit-font-smoothing:antialiased}
+button,input{font-family:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--pri)}
+:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+.ico{width:24px;height:24px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Moldura do protótipo ---------- */
+.stage{min-height:100vh;display:flex;gap:32px;justify-content:center;align-items:flex-start;padding:32px 16px}
+.toc{width:240px;position:sticky;top:32px;display:flex;flex-direction:column;gap:4px}
+.toc h1{font-size:22px;margin:0 0 4px}
+.toc p{margin:0 0 12px;color:var(--mut);font-size:14px}
+.toc button{display:flex;gap:10px;align-items:center;text-align:left;border:0;background:transparent;padding:9px 12px;border-radius:10px;font-size:15px;font-weight:500}
+.toc button:hover{background:rgba(255,255,255,.6)}
+.toc button[aria-current="true"]{background:var(--surf);color:var(--pri);font-weight:700;box-shadow:var(--shadow)}
+.toc .num{width:24px;height:24px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--mut)}
+.toc button[aria-current="true"] .num{background:var(--pri);color:#fff}
+.device{width:390px;height:844px;border-radius:36px;overflow:hidden;background:var(--bg);box-shadow:0 0 0 10px #1B1F24,0 24px 60px rgba(0,0,0,.25);position:relative}
+.device.wide{width:min(1280px,calc(100vw - 320px));height:800px;border-radius:16px;box-shadow:0 0 0 1px var(--line),0 24px 60px rgba(0,0,0,.18)}
+@media (max-width:760px){
+  .stage{padding:0;display:block}
+  .toc{display:none}
+  .device,.device.wide{width:100%;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
+}
+
+/* ---------- Telas ---------- */
+.screen{display:none;height:100%;flex-direction:column;background:var(--bg)}
+.screen.on{display:flex}
+.header{display:flex;align-items:center;gap:12px;min-height:68px;padding:0 16px;background:var(--surf);border-bottom:1px solid var(--line)}
+.header .title{flex:1;min-width:0}
+.header h2{margin:0;font-size:21px;font-weight:700}
+.header small{display:block;color:var(--mut);font-size:15px}
+.content{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.footer{display:flex;gap:12px;padding:14px 20px 22px;background:var(--surf);border-top:1px solid var(--line)}
+.footer > *{flex:1}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:58px;padding:0 18px;border-radius:12px;border:2px solid transparent;font-size:19px;font-weight:600;text-decoration:none;background:var(--pri);color:#fff}
+.btn:hover{background:var(--pri-d)}
+.btn.outline{background:var(--surf);border-color:var(--pri);color:var(--pri)}
+.btn.outline:hover{background:var(--pri-s)}
+.btn.soft{background:var(--pri-s);color:var(--pri)}
+.btn.ghost{background:var(--surf);border-color:var(--line);color:var(--ink)}
+.btn.sm{min-height:48px;font-size:16px}
+.btn.block{width:100%}
+.icon-btn{width:44px;height:44px;border-radius:12px;border:0;background:var(--pri-s);color:var(--pri);display:grid;place-items:center}
+.ouvir{min-height:44px;padding:0 14px;border-radius:22px;font-size:17px;background:var(--pri-s);color:var(--pri);border:0}
+.ouvir:hover{background:#D7E3F8}
+.ouvir.speaking{background:var(--pri);color:#fff}
+
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.circle{border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:14px;font-weight:700;white-space:nowrap}
+.note{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--pri-s);font-size:16px}
+.note .ico{color:var(--pri);width:22px;height:22px}
+.eyebrow{font-size:13px;font-weight:700;color:var(--mut);letter-spacing:.04em;margin:4px 0 -6px}
+.muted{color:var(--mut)}
+h3{margin:0}
+p{margin:0}
+
+label.lbl{font-size:17px;font-weight:600}
+.input{width:100%;height:58px;padding:0 16px;border-radius:12px;border:1.5px solid var(--line);background:var(--surf);font-size:22px;font-weight:500}
+.input::placeholder{color:#8A9099;font-weight:400}
+.input:focus{outline:none;border:2px solid var(--pri)}
+.input.ok{border:2px solid var(--gr)}
+.input.err{border:2px solid var(--red)}
+.help{font-size:15px;color:var(--mut)}
+.help.ok{color:var(--gr);font-weight:600}
+.help.err{color:var(--red);font-weight:600}
+
+.check{display:flex;gap:12px;align-items:center;font-size:17px;font-weight:500;cursor:pointer}
+.check input{width:28px;height:28px;accent-color:var(--pri);margin:0}
+
+/* Login */
+.brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:12px 24px 20px}
+.logo{width:80px;height:80px;border-radius:22px;background:var(--pri);color:#fff;display:grid;place-items:center}
+.logo .ico{width:46px;height:46px}
+.brand h1{margin:0;font-size:34px}
+.divider{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:15px;font-weight:500}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* Código */
+.code{display:flex;justify-content:space-between}
+.code input{width:50px;height:62px;border-radius:12px;border:1.5px solid var(--line);text-align:center;font-size:28px;font-weight:700;background:var(--surf)}
+.code input:focus{outline:none;border:2.5px solid var(--pri)}
+.code input.filled{border-color:var(--ink)}
+
+/* Painel */
+.cta{display:flex;align-items:center;gap:16px;padding:20px;border-radius:18px;background:var(--pri);color:#fff;border:0;text-align:left;box-shadow:var(--shadow)}
+.cta:hover{background:var(--pri-d)}
+.cta strong{display:block;font-size:22px;line-height:1.2}
+.cta span{color:var(--on-pri);font-size:16px;font-weight:500}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.tile{min-height:138px;display:flex;flex-direction:column;justify-content:space-between;gap:12px;padding:16px;border-radius:16px;border:1px solid var(--line);background:var(--surf);box-shadow:var(--shadow);text-align:left;font-size:18px;font-weight:700}
+.tile:hover{border-color:var(--pri)}
+.alert-strip{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--ye-s);border:1.5px solid var(--ye);color:var(--ye-t);text-align:left}
+.tabbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:8px 8px 14px;background:var(--surf);border-top:1px solid var(--line)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;font-size:14px;font-weight:500;color:var(--mut);padding:6px 0}
+.tab .pill{width:56px;height:32px;border-radius:16px;display:grid;place-items:center}
+.tab[aria-current="page"]{color:var(--pri);font-weight:700}
+.tab[aria-current="page"] .pill{background:var(--pri-s)}
+
+/* Diagnóstico */
+.progress{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.progress i{height:8px;border-radius:4px;background:var(--line)}
+.progress i.on{background:var(--pri)}
+.stepper{flex-direction:row;align-items:center;justify-content:space-between;padding:20px}
+.round{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--pri);background:var(--surf);color:var(--pri)}
+.round.fill{background:var(--pri);color:#fff}
+.round .ico{width:28px;height:28px;stroke-width:2.6}
+.count{text-align:center}
+.count b{display:block;font-size:60px;line-height:1}
+.qnum{width:24px;height:24px;border-radius:12px;background:var(--surf);display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--mut);flex-shrink:0}
+
+/* Resultado */
+.benefit.active{background:var(--gr-s);border:1.5px solid var(--gr);box-shadow:none;color:var(--gr-t)}
+.benefit.new{background:var(--ye-s);border:1.5px solid var(--ye);box-shadow:none;color:var(--ye-t)}
+
+/* CadÚnico */
+.states{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.states span{height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:4px;font-size:15px;font-weight:500;color:var(--mut);background:#F1EFEA}
+.states span.on{background:var(--gr-s);border:1.5px solid var(--gr);color:var(--gr-t);font-weight:700}
+.person{padding:10px 0;border-bottom:1px solid #ECE9E2}
+.person:last-child{border-bottom:0}
+.ini{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;background:var(--pri-s);color:var(--pri);flex-shrink:0}
+.switch{position:relative;width:52px;height:30px;flex-shrink:0}
+.switch input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.switch span{position:absolute;inset:0;border-radius:15px;background:#B9B4A8;transition:.2s;pointer-events:none}
+.switch span::after{content:"";position:absolute;width:24px;height:24px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s}
+.switch input:checked + span{background:var(--pri)}
+.switch input:checked + span::after{left:25px}
+
+/* Postos */
+.chips{display:flex;gap:8px}
+.chip{height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--line);background:var(--surf);font-size:16px;font-weight:600}
+.chip[aria-pressed="true"]{background:var(--pri);border-color:var(--pri);color:#fff}
+.map{border-radius:16px;overflow:hidden;border:1px solid var(--line);line-height:0}
+.open{color:var(--gr);font-weight:600;font-size:15px}
+
+/* Modo agente */
+.agent{background:var(--bg)}
+.topbar{display:flex;align-items:center;gap:14px;height:72px;padding:0 28px;background:var(--surf);border-bottom:1px solid var(--line)}
+.topbar .logo{width:40px;height:40px;border-radius:10px}
+.topbar .logo .ico{width:24px;height:24px}
+.agent-main{flex:1;display:flex;min-height:0}
+.side{width:256px;padding:24px 16px;background:var(--surf);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.side button{display:flex;align-items:center;gap:12px;height:48px;padding:0 14px;border-radius:10px;border:0;background:none;font-size:17px;font-weight:500;text-align:left}
+.side button .ico{width:20px;height:20px;color:var(--mut)}
+.side button[aria-current="page"]{background:var(--pri-s);color:var(--pri);font-weight:700}
+.side button[aria-current="page"] .ico{color:var(--pri)}
+.form-area{flex:1;overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;gap:20px}
+.steps{display:flex;flex-wrap:wrap;align-items:center;gap:10px 8px;font-size:15px;font-weight:500;color:var(--mut)}
+.steps .s{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.steps .n{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);background:var(--surf);display:grid;place-items:center;font-size:14px;font-weight:700}
+.steps .s.on{color:var(--pri);font-weight:700}
+.steps .s.on .n{background:var(--pri);border-color:var(--pri);color:#fff}
+.steps hr{flex:1;border:0;height:2px;background:var(--line);margin:0;min-width:12px;max-width:60px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 20px}
+.f{display:flex;flex-direction:column;gap:6px}
+.f label{font-size:16px;font-weight:600}
+.f .input{height:52px;font-size:19px;border-radius:10px}
+.preview{width:340px;padding:28px 24px;background:var(--soft);border-left:1px solid var(--line);display:flex;flex-direction:column;gap:14px}
+.skel{height:12px;border-radius:6px;background:var(--sk)}
+@media (max-width:1100px){.preview{display:none}}
+@media (max-width:760px){.side{display:none}.grid2{grid-template-columns:1fr}.topbar .who{display:none}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+
+<!-- Ícones -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-spk" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9a4 4 0 0 1 0 6"/></symbol>
+  <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 13l2 2 4-4"/></symbol>
+  <symbol id="i-idc" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6.5 16a3 3 0 0 1 5 0"/><path d="M14 10h4M14 14h3"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-6-6-11a6 6 0 0 1 12 0c0 5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 13h5M10 17h5"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.5h.01"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-nis" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 4h4v16h-4"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h10"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/><path d="M8 20v-6h8v6"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h10a4 4 0 0 1 4 4v12H9a4 4 0 0 1-4-4z"/><path d="M5 16a4 4 0 0 1 4-4h10"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M12 17.5s-3.2-1.9-3.2-3.9a1.8 1.8 0 0 1 3.2-1.1 1.8 1.8 0 0 1 3.2 1.1c0 2-3.2 3.9-3.2 3.9z"/></symbol>
+</svg>
+
+<div class="stage">
+  <nav class="toc" aria-label="Telas do protótipo">
+    <h1>Painel Social</h1>
+    <p>Protótipo de alta fidelidade · clique nas telas ou navegue pelos botões.</p>
+    <button data-go="login"><span class="num">1</span>Login</button>
+    <button data-go="codigo"><span class="num">2</span>Código SMS</button>
+    <button data-go="painel"><span class="num">3</span>Painel principal</button>
+    <button data-go="diagnostico"><span class="num">4</span>Diagnóstico</button>
+    <button data-go="resultado"><span class="num">5</span>Resultado</button>
+    <button data-go="tarifa"><span class="num">6</span>Tarifa Social</button>
+    <button data-go="cadunico"><span class="num">7</span>Meu CadÚnico</button>
+    <button data-go="postos"><span class="num">8</span>Postos próximos</button>
+    <button data-go="agente"><span class="num">9</span>Modo Agente Social</button>
+  </nav>
+
+  <div class="device" id="device">
+
+    <!-- 1 · LOGIN -->
+    <section class="screen" id="login" aria-label="Login">
+      <div class="row" style="justify-content:flex-end;padding:16px 16px 0">
+        <button class="btn ouvir" data-speak><svg class="ico" style="width:20px;height:20px"><use href="#i-spk"/></svg>Ouvir</button>
+      </div>
+      <div class="brand">
+        <div class="logo"><svg class="ico"><use href="#i-logo"/></svg></div>
+        <h1>Painel Social</h1>
+        <p class="muted" style="font-size:18px">Descubra todos os benefícios que são seus, em um só lugar.</p>
+      </div>
+      <div class="content" style="padding-top:8px;gap:14px">
+        <form class="card" style="padding:20px;gap:12px" onsubmit="event.preventDefault();go('codigo')">
+          <label class="lbl" for="cpf">Seu CPF</label>
+          <input class="input" id="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14">
+          <p class="help" id="cpf-help">Digite só os números. Os pontos aparecem sozinhos.</p>
+          <button class="btn block" type="submit"><svg class="ico" style="width:22px;height:22px"><use href="#i-msg"/></svg>Receber código por SMS</button>
+          <button class="btn outline block" type="button" style="min-height:54px" data-go="painel">Entrar com senha</button>
+        </form>
+        <div class="divider">ou</div>
+        <button class="btn ghost block" style="min-height:54px;font-size:18px" data-go="agente"><svg class="ico" style="width:22px;height:22px"><use href="#i-person"/></svg>Sou agente social ou voluntário</button>
+      </div>
+      <p class="muted" style="text-align:center;font-size:15px;padding:0 24px 24px">Precisa de ajuda? Toque em “Ouvir” para escutar esta tela.</p>
+    </section>
+
+    <!-- 2 · CÓDIGO SMS -->
+    <section class="screen" id="codigo" aria-label="Código SMS">
+      <header class="header">
+        <button class="icon-btn" data-go="login" aria-label="Voltar"><svg class="ico" style="stroke-width:2.4"><use href="#i-back"/></svg></button>
+        <div class="title"><h2>Código SMS</h2></div>
+        <button class="btn ouvir" data-speak><svg class="ico" style="width:20px;height:20px"><use href="#i-spk"/></svg>Ouvir</button>
+      </header>
+      <div class="content" style="gap:18px;padding-top:28px">
+        <div class="circle" style="width:64px;height:64px;background:var(--pri-s);color:var(--pri)"><svg class="ico" style="width:32px;height:32px"><use href="#i-msg"/></svg></div>
+        <h3 style="font-size:28px">Digite o código</h3>
+        <p class="muted" style="font-size:18px">Mandamos 6 números por SMS para o celular [SEU CELULAR].</p>
+        <div class="code" id="code">
+          <input aria-label="Número 1" maxlength="1" inputmode="numeric">
+          <input aria-label="Número 2" maxlength="1" inputmode="numeric">
+          <input aria-label="Número 3" maxlength="1" inputmode="numeric">
+          <input aria-label="Número 4" maxlength="1" inputmode="numeric">
+          <input aria-label="Número 5" maxlength="1" inputmode="numeric">
+          <input aria-label="Número 6" maxlength="1" inputmode="numeric">
+        </div>
+        <div class="note"><svg class="ico"><use href="#i-info"/></svg><span id="code-msg">Faltam 6 números. O código também aparece na notificação do celular.</span></div>
+        <button class="btn block" data-go="painel">Entrar</button>
+        <a href="#" style="text-align:center;font-size:17px;font-weight:600" onclick="event.preventDefault()">Não recebi. Enviar de novo em 0:45</a>
+      </div>
+    </section>
+
+    <!-- 3 · PAINEL PRINCIPAL -->
+    <section class="screen" id="painel" aria-label="Painel principal">
+      <header class="header" style="min-height:76px">
+        <div class="circle" style="width:44px;height:44px;background:var(--pri);color:#fff;font-weight:700;font-size:17px">MA</div>
+        <div class="title"><h2 style="font-size:22px">Olá, Maria</h2><small>O que você quer fazer hoje?</small></div>
+        <button class="btn ouvir" data-speak><svg class="ico" style="width:20px;height:20px"><use href="#i-spk"/></svg>Ouvir</button>
+      </header>
+      <div class="content" style="gap:14px;padding-top:18px">
+        <button class="alert-strip" data-go="cadunico">
+          <span class="circle" style="width:40px;height:40px;background:var(--ye);color:#fff"><svg class="ico" style="width:20px;height:20px"><use href="#i-bell"/></svg></span>
+          <span style="flex:1"><b style="display:block;font-size:17px">Atualize seu CadÚnico</b><span style="font-size:15px">Prazo até [DATA]</span></span>
+          <svg class="ico" style="width:22px;height:22px"><use href="#i-chev"/></svg>
+        </button>
+        <button class="cta" data-go="diagnostico">
+          <span class="circle" style="width:60px;height:60px;background:#fff;color:var(--pri)"><svg class="ico" style="width:32px;height:32px"><use href="#i-clip"/></svg></span>
+          <span style="flex:1;color:#fff"><strong>Ver meus benefícios e elegibilidade</strong><span>4 perguntas rápidas</span></span>
+        </button>
+        <div class="tiles">
+          <button class="tile" data-go="cadunico"><span class="circle" style="width:48px;height:48px;background:var(--pri-s);color:var(--pri)"><svg class="ico" style="width:26px;height:26px"><use href="#i-idc"/></svg></span>Meu CadÚnico</button>
+          <button class="tile" data-go="postos"><span class="circle" style="width:48px;height:48px;background:var(--pri-s);color:var(--pri)"><svg class="ico" style="width:26px;height:26px"><use href="#i-pin"/></svg></span>Postos perto de mim</button>
+          <button class="tile" data-go="resultado"><span class="circle" style="width:48px;height:48px;background:var(--pri-s);color:var(--pri)"><svg class="ico" style="width:26px;height:26px"><use href="#i-doc"/></svg></span>Meus benefícios</button>
+          <button class="tile" data-speak><span class="circle" style="width:48px;height:48px;background:var(--pri-s);color:var(--pri)"><svg class="ico" style="width:26px;height:26px"><use href="#i-help"/></svg></span>Ajuda por áudio</button>
+        </div>
+      </div>
+      <nav class="tabbar" aria-label="Navegação principal">
+        <button class="tab" aria-current="page" data-go="painel"><span class="pill"><svg class="ico" style="width:22px;height:22px"><use href="#i-home"/></svg></span>Início</button>
+        <button class="tab" data-go="resultado"><span class="pill"><svg class="ico" style="width:22px;height:22px"><use href="#i-list"/></svg></span>Benefícios</button>
+        <button class="tab" data-go="postos"><span class="pill"><svg class="ico" style="width:22px;height:22px"><use href="#i-pin"/></svg></span>Postos</button>
+        <button class="tab" data-speak><span class="pill"><svg class="ico" style="width:22px;height:22px"><use href="#i-help"/></svg></span>Ajuda</button>
+      </nav>
+    </section>
+
+    <!-- 4 · DIAGNÓSTICO -->
+    <section class="screen" id="diagnostico" aria-label="Diagnóstico">
+      <header class="header">
+        <button class="icon-btn" data-go="painel" aria-label="Voltar"><svg class="ico" style="stroke-width:2.4"><use href="#i-back"/></svg></button>
+        <div class="title"><h2>Diagnóstico</h2></div>
+        <button class="btn ouvir" data-speak><svg class="ico" style="width:20px;height:20px"><use href="#i-spk"/></svg>Ouvir</button>
+      </header>
+      <div class="content" style="gap:18px">
+        <div class="row between"><b style="color:var(--pri);font-size:16px">Pergunta 1 de 4</b><span class="muted" style="font-size:15px">Leva menos de 1 minuto</span></div>
+        <div class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+        <h3 style="font-size:28px">Quantas pessoas moram na sua casa?</h3>
+        <p class="muted" style="font-size:18px">Conte você também.</p>
+        <div class="card stepper">
+          <button class="round" id="menos" aria-label="Diminuir"><svg class="ico"><use href="#i-minus"/></svg></button>
+          <div class="count" aria-live="polite"><b id="pessoas">4</b><span class="muted" style="font-size:17px;font-weight:500">pessoas</span></div>
+          <button class="round fill" id="mais" aria-label="Aumentar"><svg class="ico"><use href="#i-plus"/></svg></button>
+        </div>
+        <div class="note"><svg class="ico"><use href="#i-info"/></svg>Exemplo: você e 3 filhos = 4 pessoas.</div>
+        <div class="card" style="background:var(--soft);border-color:var(--soft);box-shadow:none;gap:8px">
+          <b class="muted" style="font-size:13px;letter-spacing:.04em">PRÓXIMAS PERGUNTAS</b>
+          <div class="row" style="align-items:flex-start;gap:10px"><span class="qnum">2</span><span class="muted">Quanto a casa ganha por mês, somando todos?</span></div>
+          <div class="row" style="align-items:flex-start;gap:10px"><span class="qnum">3</span><span class="muted">Alguém tem mais de 65 anos ou deficiência?</span></div>
+          <div class="row" style="align-items:flex-start;gap:10px"><span class="qnum">4</span><span class="muted">Você mora de aluguel, casa própria ou cedida?</span></div>
+        </div>
+      </div>
+      <footer class="footer">
+        <button class="btn outline" style="flex:0 0 auto" data-go="painel">Voltar</button>
+        <button class="btn" data-go="resultado">Continuar</button>
+      </footer>
+    </section>
+
+    <!-- 5 · RESULTADO -->
+    <section class="screen" id="resultado" aria-label="Seus benefícios">
+      <header class="header">
+        <button class="icon-btn" data-go="diagnostico" aria-label="Voltar"><svg class="ico" style="stroke-width:2.4"><use href="#i-back"/></svg></button>
+        <div class="title"><h2>Seus benefícios</h2></div>
+        <button class="btn ouvir" data-speak><svg class="ico" style="width:20px;height:20px"><use href="#i-spk"/></svg>Ouvir</button>
+      </header>
+      <div class="content" style="gap:14px">
+        <div class="row">
+          <span class="circle" style="width:44px;height:44px;background:var(--pri-s);color:var(--pri)"><svg class="ico" style="width:22px;height:22px"><use href="#i-spark"/></svg></span>
+          <div><h3 style="font-size:22px">Pronto, Maria!</h3><p class="muted">Encontramos 2 benefícios para você.</p></div>
+        </div>
+        <p class="eyebrow">VOCÊ JÁ RECEBE</p>
+        <div class="card benefit active">
+          <div class="row">
+            <span class="circle" style="width:40px;height:40px;background:var(--gr);color:#fff"><svg class="ico" style="width:22px;height:22px;stroke-width:2.6"><use href="#i-check"/></svg></span>
+            <h3 style="font-size:21px;flex:1">Bolsa Família</h3>
+            <span class="badge" style="background:var(--gr);color:#fff">Ativo</span>
+          </div>
+          <div class="row" style="gap:8px;font-weight:500"><svg class="ico" style="width:18px;height:18px"><use href="#i-cal"/></svg>Próximo pagamento: [DATA]</div>
+        </div>
+        <p class="eyebrow">NOVO PARA VOCÊ</p>
+        <div class="card benefit new" style="gap:12px">
+          <div class="row" style="align-items:flex-start">
+            <span class="circle" style="width:40px;height:40px;background:var(--ye);color:#fff"><svg class="ico" style="width:22px;height:22px"><use href="#i-bolt"/></svg></span>
+            <div style="flex:1"><h3 style="font-size:20px">Tarifa Social de Energia Elétrica</h3><p style="margin-top:4px">Você pode ter desconto na conta de luz.</p></div>
+            <span class="badge" style="background:var(--ye-t);color:#fff">Novo</span>
+          </div>
+          <button class="btn block" style="min-height:52px;font-size:18px" data-go="tarifa">Ver como pedir</button>
+        </div>
+        <div class="note" style="background:var(--soft);color:var(--mut);font-size:15px"><svg class="ico" style="color:var(--mut)"><use href="#i-info"/></svg>Outros programas: nenhum para o seu perfil agora. Avisaremos se algo mudar.</div>
+      </div>
+      <footer class="footer">
+        <button class="btn outline" style="font-size:17px" data-go="diagnostico"><svg class="ico" style="width:20px;height:20px"><use href="#i-refresh"/></svg>Refazer perguntas</button>
+        <button class="btn soft" style="font-size:17px" data-go="painel"><svg class="ico" style="width:20px;height:20px"><use href="#i-home"/></svg>Início</button>
+      </footer>
+    </section>
+
+    <!-- 6 · TARIFA SOCIAL -->
+    <section class="screen" id="tarifa" aria-label="Tarifa Social">
+      <header class="header">
+        <button class="icon-btn" data-go="resultado" aria-label="Voltar"><svg class="ico" style="stroke-width:2.4"><use href="#i-back"/></svg></button>
+        <div class="title"><h2>Tarifa Social</h2></div>
+        <button class="btn ouvir" data-speak><svg class="ico" style="width:20px;height:20px"><use href="#i-spk"/></svg>Ouvir</button>
+      </header>
+      <div class="content" style="gap:14px">
+        <div class="card" style="background:var(--ye-s);border-color:var(--ye-s);box-shadow:none;padding:20px;color:var(--ye-t)">
+          <span class="circle" style="width:52px;height:52px;background:var(--ye);color:#fff"><svg class="ico" style="width:28px;height:28px"><use href="#i-bolt"/></svg></span>
+          <h3 style="font-size:24px">Tarifa Social de Energia Elétrica</h3>
+          <p style="font-size:17px">Desconto na conta de luz para famílias inscritas no CadÚnico.</p>
+        </div>
+        <div class="row between"><h3 style="font-size:20px">O que você precisa levar</h3><span class="badge" style="background:var(--pri-s);color:var(--pri)">2 documentos</span></div>
+        <div class="card row" style="flex-direction:row;padding:14px">
+          <span class="circle" style="width:32px;height:32px;background:var(--pri);color:#fff;font-weight:700">1</span>
+          <span style="flex:1;font-size:17px;font-weight:500">Documento com foto e CPF</span>
+          <svg class="ico" style="width:26px;height:26px;color:var(--mut);stroke-width:1.8"><use href="#i-idc"/></svg>
+        </div>
+        <div class="card row" style="flex-direction:row;padding:14px">
+          <span class="circle" style="width:32px;height:32px;background:var(--pri);color:#fff;font-weight:700">2</span>
+          <span style="flex:1;font-size:17px;font-weight:500">Número do NIS (fica no cartão do Bolsa Família)</span>
+          <svg class="ico" style="width:26px;height:26px;color:var(--mut);stroke-width:1.8"><use href="#i-nis"/></svg>
+        </div>
+        <label class="check"><input type="checkbox">Já separei esses documentos</label>
+        <div class="note"><svg class="ico"><use href="#i-pin"/></svg>Onde pedir: na empresa de energia da sua cidade ou no CRAS.</div>
+      </div>
+      <footer class="footer">
+        <button class="btn" data-go="postos"><svg class="ico" style="width:22px;height:22px"><use href="#i-pin"/></svg>Ver onde pedir perto de mim</button>
+      </footer>
+    </section>
+
+    <!-- 7 · MEU CADÚNICO -->
+    <section class="screen" id="cadunico" aria-label="Meu CadÚnico">
+      <header class="header">
+        <button class="icon-btn" data-go="painel" aria-label="Voltar"><svg class="ico" style="stroke-width:2.4"><use href="#i-back"/></svg></button>
+        <div class="title"><h2>Meu CadÚnico</h2></div>
+        <button class="btn ouvir" data-speak><svg class="ico" style="width:20px;height:20px"><use href="#i-spk"/></svg>Ouvir</button>
+      </header>
+      <div class="content" style="gap:14px">
+        <div class="card" style="padding:18px;gap:12px">
+          <div class="row between"><span class="muted" style="font-weight:500">Situação do cadastro</span><span class="badge" style="background:var(--gr);color:#fff">Ativo</span></div>
+          <div class="states">
+            <span class="on"><svg class="ico" style="width:16px;height:16px;stroke-width:2.6"><use href="#i-check"/></svg>Ativo</span>
+            <span>Pendente</span>
+            <span>Desatualizado</span>
+          </div>
+          <div class="row muted" style="gap:8px"><svg class="ico" style="width:18px;height:18px"><use href="#i-cal"/></svg>Última atualização: [DATA]</div>
+        </div>
+        <div class="card row" style="flex-direction:row;align-items:flex-start;background:var(--ye-s);border:1.5px solid var(--ye);box-shadow:none;color:var(--ye-t)">
+          <span class="circle" style="width:40px;height:40px;background:var(--ye);color:#fff"><svg class="ico" style="width:20px;height:20px"><use href="#i-bell"/></svg></span>
+          <div><h3 style="font-size:19px">Atualize até [DATA]</h3><p style="font-size:15px;margin-top:4px">Faltam [N] dias. Se passar do prazo, o benefício pode ser bloqueado.</p></div>
+        </div>
+        <p class="eyebrow">QUEM ESTÁ NO CADASTRO</p>
+        <div class="card" style="gap:0;padding:4px 16px">
+          <div class="row person"><span class="ini" style="background:var(--pri);color:#fff">MA</span><span style="flex:1;font-size:17px;font-weight:500">Maria Aparecida</span><span class="muted" style="font-size:15px">Responsável</span></div>
+          <div class="row person"><span class="ini">F1</span><span style="flex:1;font-size:17px;font-weight:500">[Nome do filho 1]</span><span class="muted" style="font-size:15px">Filho(a)</span></div>
+          <div class="row person"><span class="ini">F2</span><span style="flex:1;font-size:17px;font-weight:500">[Nome do filho 2]</span><span class="muted" style="font-size:15px">Filho(a)</span></div>
+          <div class="row person"><span class="ini">F3</span><span style="flex:1;font-size:17px;font-weight:500">[Nome do filho 3]</span><span class="muted" style="font-size:15px">Filho(a)</span></div>
+        </div>
+        <div class="card row" style="flex-direction:row;padding:14px">
+          <label for="sms" style="flex:1;font-size:17px;font-weight:500">Me avisar por SMS antes do prazo</label>
+          <span class="switch"><input type="checkbox" id="sms" checked role="switch"><span></span></span>
+        </div>
+      </div>
+      <footer class="footer">
+        <button class="btn" style="font-size:17px"><svg class="ico" style="width:20px;height:20px"><use href="#i-book"/></svg>Como atualizar</button>
+        <button class="btn outline" style="font-size:17px" data-go="postos"><svg class="ico" style="width:20px;height:20px"><use href="#i-pin"/></svg>Onde atualizar</button>
+      </footer>
+    </section>
+
+    <!-- 8 · POSTOS -->
+    <section class="screen" id="postos" aria-label="Postos próximos">
+      <header class="header">
+        <button class="icon-btn" data-go="painel" aria-label="Voltar"><svg class="ico" style="stroke-width:2.4"><use href="#i-back"/></svg></button>
+        <div class="title"><h2>Postos próximos</h2></div>
+        <button class="btn ouvir" data-speak><svg class="ico" style="width:20px;height:20px"><use href="#i-spk"/></svg>Ouvir</button>
+      </header>
+      <div class="content" style="gap:14px;padding-top:16px">
+        <div class="chips" role="group" aria-label="Filtrar postos">
+          <button class="chip" aria-pressed="true">CRAS</button>
+          <button class="chip" aria-pressed="false">Energia</button>
+          <button class="chip" aria-pressed="false">Todos</button>
+        </div>
+        <div class="map" role="img" aria-label="Mapa com você no centro e dois postos próximos">
+          <svg viewBox="0 0 350 210" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="350" height="210" fill="#E9E5DC"/><rect x="215" y="16" width="110" height="64" rx="10" fill="#CFE5CF"/><rect x="20" y="150" width="80" height="44" rx="8" fill="#CFE5CF"/>
+            <path d="M-10 140 L360 108" stroke="#fff" stroke-width="16"/><path d="M118 -10 L150 220" stroke="#fff" stroke-width="13"/><path d="M-10 52 L360 72" stroke="#fff" stroke-width="9"/><path d="M255 220 L300 -10" stroke="#fff" stroke-width="9"/>
+            <circle cx="140" cy="122" r="16" fill="#1E4FB4" fill-opacity=".18"/><circle cx="140" cy="122" r="8" fill="#1E4FB4" stroke="#fff" stroke-width="3"/>
+            <g transform="translate(56,30)"><path d="M14 34s-13-11-13-21a13 13 0 0 1 26 0c0 10-13 21-13 21z" fill="#1E4FB4" stroke="#fff" stroke-width="2.5"/><circle cx="14" cy="13" r="5" fill="#fff"/></g>
+            <g transform="translate(232,100)"><path d="M14 34s-13-11-13-21a13 13 0 0 1 26 0c0 10-13 21-13 21z" fill="#C99400" stroke="#fff" stroke-width="2.5"/><circle cx="14" cy="13" r="5" fill="#fff"/></g>
+          </svg>
+        </div>
+        <div class="card" style="gap:8px">
+          <div class="row between"><h3 style="font-size:19px">[Nome do CRAS]</h3><span class="badge" style="background:#F1EFEA;color:var(--mut)">[distância]</span></div>
+          <p class="muted" style="font-size:15px">[Endereço]</p>
+          <div class="row open" style="gap:6px"><svg class="ico" style="width:16px;height:16px"><use href="#i-clock"/></svg>Aberto agora · seg a sex, [horário]</div>
+          <div class="row" style="gap:10px;padding-top:4px">
+            <button class="btn outline sm" style="flex:1"><svg class="ico" style="width:18px;height:18px"><use href="#i-phone"/></svg>Ligar</button>
+            <button class="btn sm" style="flex:1"><svg class="ico" style="width:18px;height:18px"><use href="#i-route"/></svg>Como chegar</button>
+          </div>
+        </div>
+        <div class="card" style="gap:8px">
+          <div class="row between"><h3 style="font-size:19px">[Posto de energia]</h3><span class="badge" style="background:#F1EFEA;color:var(--mut)">[distância]</span></div>
+          <p class="muted" style="font-size:15px">[Endereço]</p>
+          <div class="row open" style="gap:6px"><svg class="ico" style="width:16px;height:16px"><use href="#i-clock"/></svg>Aberto · seg a sáb, [horário]</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 · MODO AGENTE SOCIAL -->
+    <section class="screen agent" id="agente" aria-label="Modo Agente Social">
+      <header class="topbar">
+        <div class="logo"><svg class="ico"><use href="#i-logo"/></svg></div>
+        <b style="font-size:22px">Painel Social</b>
+        <span class="badge" style="background:var(--pri-s);color:var(--pri)">Modo Agente</span>
+        <span style="flex:1"></span>
+        <span class="circle who" style="width:40px;height:40px;background:var(--pri-s);color:var(--pri)"><svg class="ico" style="width:20px;height:20px"><use href="#i-person"/></svg></span>
+        <span class="who"><b style="display:block;font-size:16px">[Nome do agente]</b><span class="muted" style="font-size:14px">[CRAS / ONG]</span></span>
+        <button class="btn ghost" style="min-height:44px;font-size:16px" data-go="login"><svg class="ico" style="width:18px;height:18px"><use href="#i-logout"/></svg>Sair</button>
+      </header>
+      <div class="agent-main">
+        <nav class="side" aria-label="Menu do agente">
+          <button aria-current="page"><svg class="ico"><use href="#i-plus"/></svg>Novo atendimento</button>
+          <button><svg class="ico"><use href="#i-cal"/></svg>Atendimentos de hoje</button>
+          <button><svg class="ico"><use href="#i-search"/></svg>Buscar cidadão</button>
+          <button><svg class="ico"><use href="#i-pin"/></svg>Postos e contatos</button>
+        </nav>
+        <div class="form-area">
+          <div><h2 style="font-size:30px;margin:0">Novo atendimento</h2><p class="muted" style="margin-top:4px">Preencha junto com o cidadão. Leva cerca de 5 minutos.</p></div>
+          <div class="steps" aria-label="Etapas do atendimento">
+            <span class="s on"><span class="n">1</span>Identificação</span><hr>
+            <span class="s"><span class="n">2</span>Renda e família</span><hr>
+            <span class="s"><span class="n">3</span>Diagnóstico</span><hr>
+            <span class="s"><span class="n">4</span>Encaminhamento</span>
+          </div>
+          <form class="card" style="padding:24px;gap:18px" onsubmit="event.preventDefault()">
+            <div class="grid2">
+              <div class="f"><label for="a-cpf">CPF do cidadão</label><input class="input ok" id="a-cpf" value="123.456.789-09"><span class="help ok">✓ CPF válido</span></div>
+              <div class="f"><label for="a-nome">Nome completo</label><input class="input" id="a-nome" placeholder="Como está no documento"></div>
+              <div class="f"><label for="a-nasc">Data de nascimento</label><input class="input" id="a-nasc" placeholder="dd/mm/aaaa"></div>
+              <div class="f"><label for="a-tel">Celular para avisos (opcional)</label><input class="input" id="a-tel" placeholder="(00) 00000-0000"></div>
+              <div class="f"><label for="a-pes">Pessoas na casa</label><input class="input" id="a-pes" placeholder="Ex.: 4" inputmode="numeric"></div>
+              <div class="f"><label for="a-renda">Renda total da casa por mês (R$)</label><input class="input err" id="a-renda" value="oitocentos" aria-describedby="renda-help"><span class="help err" id="renda-help">⚠ Digite só números. Exemplo: 800</span></div>
+            </div>
+            <label class="check" style="font-size:16px"><input type="checkbox" style="width:24px;height:24px">O cidadão autorizou o uso destes dados para o diagnóstico</label>
+          </form>
+          <div class="row" style="justify-content:flex-end">
+            <button class="btn outline" style="min-height:52px;font-size:17px"><svg class="ico" style="width:20px;height:20px"><use href="#i-save"/></svg>Salvar rascunho</button>
+            <button class="btn" style="min-height:52px;font-size:17px">Próximo: renda e família</button>
+          </div>
+        </div>
+        <aside class="preview" aria-label="Prévia do diagnóstico">
+          <div class="row" style="gap:10px"><span class="circle" style="width:36px;height:36px;background:var(--pri-s);color:var(--pri)"><svg class="ico" style="width:18px;height:18px"><use href="#i-clip"/></svg></span><b style="font-size:19px">Prévia do diagnóstico</b></div>
+          <p class="muted" style="font-size:15px">Preencha os dados para ver os benefícios do cidadão.</p>
+          <div class="card" style="box-shadow:none"><div class="skel" style="width:80%"></div><div class="skel" style="width:55%"></div></div>
+          <div class="card" style="box-shadow:none"><div class="skel" style="width:80%"></div><div class="skel" style="width:55%"></div></div>
+          <span style="flex:1"></span>
+          <div class="note" style="background:var(--surf);font-size:14px"><svg class="ico" style="width:20px;height:20px"><use href="#i-alert"/></svg>A situação no CadÚnico aparece aqui depois do CPF.</div>
+        </aside>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const device = document.getElementById('device');
+  const screens = [...document.querySelectorAll('.screen')];
+  const ids = screens.map(s => s.id);
+  let speakingBtn = null;
+
+  function go(id){
+    if(!ids.includes(id)) id = 'login';
+    stopSpeech();
+    screens.forEach(s => s.classList.toggle('on', s.id === id));
+    device.classList.toggle('wide', id === 'agente');
+    document.querySelectorAll('.toc button').forEach(b => b.setAttribute('aria-current', b.dataset.go === id));
+    const c = document.querySelector('#' + id + ' .content, #' + id + ' .form-area');
+    if(c) c.scrollTop = 0;
+    if(location.hash.slice(1) !== id) history.replaceState(null, '', '#' + id);
+  }
+  window.go = go;
+
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-go]');
+    if(t){ e.preventDefault(); go(t.dataset.go); }
+  });
+  window.addEventListener('hashchange', () => go(location.hash.slice(1)));
+  go(location.hash.slice(1) || 'login');
+
+  // Ouvir: lê a tela atual em voz alta (RNF01)
+  function stopSpeech(){
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    if(speakingBtn){ speakingBtn.classList.remove('speaking'); speakingBtn = null; }
+  }
+  document.querySelectorAll('[data-speak]').forEach(btn => btn.addEventListener('click', () => {
+    if(!('speechSynthesis' in window)) { alert('Seu navegador não tem leitura em voz alta.'); return; }
+    if(speakingBtn === btn){ stopSpeech(); return; }
+    stopSpeech();
+    const screen = btn.closest('.screen');
+    const text = [...screen.querySelectorAll('h1,h2,h3,p,label,.btn:not(.ouvir),.tile,.badge,.note,.alert-strip')]
+      .map(n => n.innerText.trim()).filter(Boolean)
+      .filter((v,i,a) => a.indexOf(v) === i).join('. ').replace(/\[[^\]]*\]/g, '');
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'pt-BR'; u.rate = 0.95;
+    u.onend = stopSpeech;
+    speakingBtn = btn; btn.classList.add('speaking');
+    speechSynthesis.speak(u);
+  }));
+
+  // Máscara de CPF + validação em tempo real (RNF05)
+  const cpf = document.getElementById('cpf'), cpfHelp = document.getElementById('cpf-help');
+  cpf.addEventListener('input', () => {
+    const d = cpf.value.replace(/\D/g, '').slice(0, 11);
+    cpf.value = d.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    cpf.classList.toggle('ok', d.length === 11);
+    cpfHelp.className = 'help' + (d.length === 11 ? ' ok' : '');
+    cpfHelp.textContent = d.length === 11 ? '✓ CPF completo' : d.length ? `Faltam ${11 - d.length} números.` : 'Digite só os números. Os pontos aparecem sozinhos.';
+  });
+
+  // Código SMS: avança sozinho
+  const boxes = [...document.querySelectorAll('#code input')], codeMsg = document.getElementById('code-msg');
+  boxes.forEach((b, i) => {
+    b.addEventListener('input', () => {
+      b.value = b.value.replace(/\D/g, '').slice(0, 1);
+      b.classList.toggle('filled', !!b.value);
+      if(b.value && boxes[i + 1]) boxes[i + 1].focus();
+      const left = boxes.filter(x => !x.value).length;
+      codeMsg.textContent = left ? `Faltam ${left} ${left === 1 ? 'número' : 'números'}. O código também aparece na notificação do celular.` : 'Código completo! Toque em Entrar.';
+    });
+    b.addEventListener('keydown', e => { if(e.key === 'Backspace' && !b.value && boxes[i - 1]) boxes[i - 1].focus(); });
+  });
+
+  // Contador de pessoas
+  const n = document.getElementById('pessoas'); let qtd = 4;
+  document.getElementById('menos').onclick = () => { qtd = Math.max(1, qtd - 1); n.textContent = qtd; };
+  document.getElementById('mais').onclick = () => { qtd = Math.min(20, qtd + 1); n.textContent = qtd; };
+
+  // Filtros de postos
+  document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === c));
+  }));
+
+  // Agente: validação da renda
+  const renda = document.getElementById('a-renda'), rh = document.getElementById('renda-help');
+  renda.addEventListener('input', () => {
+    const okv = /^\d+([.,]\d{1,2})?$/.test(renda.value.trim());
+    renda.classList.toggle('err', !okv); renda.classList.toggle('ok', okv);
+    rh.className = 'help ' + (okv ? 'ok' : 'err');
+    rh.textContent = okv ? '✓ Valor válido' : '⚠ Digite só números. Exemplo: 800';
+  });
+})();
+</script>
+</body>
+</html>
